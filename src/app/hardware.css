@@ -1,0 +1,127 @@
+.hw-shell {
+  --pcb-bg: #08111d;
+  --pcb-panel: #0e1b2b;
+  --pcb-panel-2: #102239;
+  --pcb-line: #1a5b70;
+  --pcb-cyan: #52d6df;
+  --pcb-amber: #f7c873;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--pcb-bg) !important;
+  color: #d8f1ef !important;
+}
+
+.hw-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  opacity: .55;
+  background-image: linear-gradient(#123248 1px, transparent 1px), linear-gradient(90deg, #123248 1px, transparent 1px), radial-gradient(circle at 50% 35%, #13506b44, transparent 46%);
+  background-size: 32px 32px, 32px 32px, 100% 100%;
+}
+
+.hw-shell::after {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  z-index: -1;
+  border: 1px solid #1b5061;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px #07101a, inset 0 0 34px #06101c;
+}
+
+.hw-header {
+  position: relative;
+  background: #091724 !important;
+  border-bottom: 1px solid #236477 !important;
+  box-shadow: 0 7px 24px #0008;
+}
+
+.hw-header::after {
+  content: "SYS // MEMECARD NETWORK · LOCAL BUS 01";
+  position: absolute;
+  right: 4vw;
+  bottom: 5px;
+  color: #398b98;
+  font: 8px monospace;
+  letter-spacing: .14em;
+}
+
+.hw-header .brandMark {
+  border-radius: 3px !important;
+  background: #102f42 !important;
+  border: 1px solid var(--pcb-cyan);
+  box-shadow: 0 0 12px #52d6df55;
+}
+
+.hw-header .brand strong { color: #dffaf7; }
+.hw-header .brand span:not(.brandMark), .hw-header .headerMeta { color: #6baab1 !important; }
+.hw-header .downloadTop { background: #12364a !important; border: 1px solid #3ab6c1; color: #dffaf7 !important; box-shadow: 0 0 12px #52d6df33; }
+
+.hw-board {
+  position: relative;
+  background: transparent !important;
+  gap: 18px !important;
+  padding: 18px !important;
+}
+
+.hw-board::before {
+  content: "";
+  position: absolute;
+  left: 32%;
+  right: 32%;
+  top: 50%;
+  height: 1px;
+  background: #236477;
+  box-shadow: 0 0 9px #52d6df;
+  pointer-events: none;
+}
+
+[class*="sidebar"], [class*="controls"] {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(145deg, #102238, #0b1726) !important;
+  border: 1px solid #205568 !important;
+  box-shadow: 0 14px 30px #0008, inset 0 0 0 1px #07111e, inset 0 0 24px #123b4b33;
+}
+
+[class*="sidebar"]::before, [class*="controls"]::before, [class*="canvasArea"]::before {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--pcb-cyan);
+  border-radius: 50%;
+  background: #091724;
+  box-shadow: 0 0 8px #52d6df;
+}
+
+[class*="sidebar"]::before { right: -5px; top: 20%; }
+[class*="controls"]::before { left: -5px; top: 20%; }
+[class*="canvasArea"]::before { left: 50%; top: -5px; }
+
+[class*="sidebar"] h1, [class*="controls"] h2, [class*="canvasArea"] h2 { color: #e5fbf7 !important; }
+[class*="sidebar"] .intro, [class*="notice"], [class*="templateItem"] small, [class*="canvasFooter"] { color: #6ea5ad !important; }
+[class*="eyebrow"], [class*="sectionKicker"] { color: var(--pcb-cyan) !important; }
+
+[class*="upload"], [class*="textarea"], [class*="saveTemplate"] input {
+  background: #0a1725 !important;
+  border-color: #286679 !important;
+  color: #dffaf7 !important;
+  box-shadow: inset 0 0 14px #0005;
+}
+
+[class*="upload"]:hover { border-color: var(--pcb-cyan) !important; box-shadow: 0 0 14px #52d6df33, inset 0 0 14px #0005; }
+[class*="canvasArea"] { position: relative; background: #0a1725 !important; border: 1px solid #205568; box-shadow: 0 14px 30px #0008, inset 0 0 34px #06101c; }
+[class*="previewShell"] { background: #07111d; border: 1px solid #153c50; }
+[class*="previewFrame"] { border: 4px solid #183d4d; box-shadow: 0 0 0 1px #52d6df55, 0 0 26px #000; }
+[class*="ratios"] button, [class*="dataActions"] button, [class*="dataActions"] label { color: #76b5ba !important; border-color: #24586a !important; }
+[class*="ratios"] [class*="activeRatio"] { color: #07111d !important; background: var(--pcb-cyan) !important; }
+[class*="saveTemplate"] button { background: #145063 !important; border: 1px solid var(--pcb-cyan); }
+[class*="templateItem"] { border-color: #1a4658 !important; color: #d8f1ef !important; }
+[class*="footer"] { background: #091724 !important; border-top-color: #205568 !important; color: #60949d !important; }
+
+@media (max-width: 1000px) { .hw-board { padding: 12px !important; gap: 12px !important; } }
+@media (max-width: 700px) { .hw-board { padding: 0 !important; } .hw-shell::after { inset: 7px; } .hw-header::after { display: none; } }

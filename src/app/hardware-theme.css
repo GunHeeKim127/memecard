@@ -1,0 +1,90 @@
+/* PCB 보드 테마 전체 스타일 */
+.pcb-container {
+  background-color: #050c08;
+  background-image: radial-gradient(rgba(0, 255, 102, 0.15) 1px, transparent 1px);
+  background-size: 20px 20px;
+  min-height: 100vh;
+  color: #00ffaa;
+  font-family: 'Courier New', Courier, monospace;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+/* PCB 상의 부품(IC 칩 / Module) 디자인 */
+.pcb-module {
+  background: #0a1a12;
+  border: 2px solid #00ffaa;
+  border-radius: 6px;
+  padding: 20px;
+  box-shadow: 0 0 15px rgba(0, 255, 170, 0.15);
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.pcb-module::before {
+  content: '';
+  position: absolute;
+  top: -4px; left: 10px; right: 10px; height: 2px;
+  background: #00ffaa;
+}
+
+/* 모듈 타이틀 */
+.pcb-header {
+  font-size: 0.9rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: #ffffff;
+  border-bottom: 1px dashed #00ffaa;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* PCB 입력 폼 및 버튼 */
+.pcb-input, .pcb-select {
+  background: #030805;
+  border: 1px solid #00ffaa;
+  color: #00ffaa;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-family: monospace;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.pcb-btn {
+  background: #0a2918;
+  border: 1px solid #00ffaa;
+  color: #00ffaa;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-family: monospace;
+  font-weight: bold;
+  border-radius: 4px;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.pcb-btn:hover {
+  background: #00ffaa;
+  color: #050c08;
+}
+
+/* 파티클 신호가 도착했을 때의 발광/진동 애니메이션 */
+.pcb-node-hit {
+  animation: pcb-hit-effect 0.4s ease-out;
+}
+
+@keyframes pcb-hit-effect {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 30px rgba(0, 255, 170, 1), inset 0 0 15px rgba(0, 255, 170, 0.8);
+    border-color: #ffffff !important;
+  }
+  30% { transform: scale(1.02) translate(-2px, 1px); }
+  60% { transform: scale(1.01) translate(1px, -1px); }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 15px rgba(0, 255, 170, 0.15);
+  }
+}
