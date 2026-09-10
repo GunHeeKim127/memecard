@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CYBER_DOCK // WANTED & ID FORGER</title>
+  <style>
+    :root {
+      --neon-cyan: #00f3ff;
+      --neon-magenta: #ff0055;
+      --neon-yellow: #fcee0a;
+      --bg-dark: #08090c;
+      --panel-bg: #12151d;
+      --panel-border: #1e2638;
+      --text-main: #c3ccdb;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Courier New', monospace; }
+    body { background-color: var(--bg-dark); color: var(--text-main); padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+    
+    /* Header */
+    header { border-bottom: 2px solid var(--neon-cyan); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    h1 { color: var(--neon-cyan); font-size: 1.5rem; text-shadow: 0 0 8px var(--neon-cyan); }
+    .status-tag { background: var(--neon-magenta); color: #000; font-weight: bold; padding: 2px 8px; font-size: 0.8rem; }
+
+    /* Layout */
+    .container { display: grid; grid-template-columns: 360px 1fr; gap: 20px; }
+    
+    /* Terminal Panels */
+    .panel { background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 15px; display: flex; flex-direction: column; gap: 15px; position: relative; }
+    .panel::before { content: ""; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--neon-cyan); }
+    .panel-title { color: var(--neon-yellow); font-size: 1rem; border-bottom: 1px dashed var(--panel-border); padding-bottom: 5px; }
+
+    /* Controls */
+    .control-group { display: flex; flex-direction: column; gap: 5px; }
+    label { font-size: 0.8rem; color: var(--neon-cyan); display: flex; justify-content: space-between; }
+    input, select, textarea, button {
+      background: #000; border: 1px solid var(--panel-border); color: #fff; padding: 8px; font-size: 0.85rem;
+    }
+    input[type="range"] { padding: 0; }
+    input[type="color"] { height: 35px; cursor: pointer; padding: 2px; }
+    input:focus, select:focus, textarea:focus { border-color: var(--neon-cyan); outline: none; }
+    
+    /* Buttons */
+    .btn-cyber { background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .btn-cyber:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 10px var(--neon-cyan); }
+    .btn-danger { border-color: var(--neon-magenta); color: var(--neon-magenta); }
+    .btn-danger:hover { background: var(--neon-magenta); color: #000; box-shadow: 0 0 10px var(--neon-magenta); }
+
+    /* Ratio Controller */
+    .ratio-btns { display: flex; gap: 5px; }
+    .ratio-btns button { flex: 1; }
+
+    /* Canvas Area */
+    .preview-container { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; border: 1px solid var(--panel-border); padding: 20px; min-height: 500px; }
+    canvas { border: 1px solid var(--neon-cyan); max-width: 100%; max-height: 600px; box-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
+
+    /* Terminal Console Output */
+    .terminal-log { background: #000; border: 1px solid var(--panel-border); padding: 10px; font-size: 0.75rem; color: #00ff66; height: 100px; overflow-y: auto; font-family: monospace; }
+    .log-err { color: var(--neon-magenta); }
+
+    /* Template Lists */
+    .template-list { display: flex; flex-direction: column; gap: 5px; max-height: 150px; overflow-y: auto; }
+    .template-item { display: flex; justify-content: space-between; background: #08090c; padding: 5px; border: 1px solid var(--panel-border); font-size: 0.8rem; }
+
+    /* Sub Sections */
+    .full-width { grid-column: span 2; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .section-subtitle { color: var(--neon-magenta); font-size: 0.85rem; border-left: 3px solid var(--neon-magenta); padding-left: 5px; margin-top: 5px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>SYSTEM // CYBER_DOCK_v3.20</h1>
+    <span class="status-tag">SYSTEM_READY</span>
+  </header>
+
+  <div class="container">
+    <!-- 왼쪽: 조작 패널 -->
+    <section class="panel">
+      <div class="panel-title">1. 데이터 입력 & 제어</div>
+
+      <!-- 이미지 업로드 -->
+      <div class="control-group">
+        <label>이미지 로드 (PNG, JPEG)</label>
+        <input type="file" id="imageInput" accept="image/png, image/jpeg">
+      </div>
+
+      <!-- 텍스트 편집 -->
+      <div class="control-group">
+        <label>해킹/수배 문구 (한글 지원)</label>
+        <input type="text" id="textInput" value="수배: 위성 데이터 해킹범">
+      </div>
+
+      <div class="grid-2">
+        <div class="control-group">
+          <label>X 좌표 <span id="posXLabel">50%</span></label>
+          <input type="range" id="posX" min="0" max="100" value="50">
+        </div>
+        <div class="control-group">
+          <label>Y 좌표 <span id="posYLabel">80%</span></label>
+          <input type="range" id="posY" min="0" max="100" value="80">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="control-group">
+          <label>폰트 크기 <span id="fontSizeLabel">32</span></label>
+          <input type="range" id="fontSize" min="12" max="72" value="32">
+        </div>
+        <div class="control-group">
+          <label>텍스트 색상</label>
+          <input type="color" id="textColor" value="#00f3ff">
+        </div>
+      </div>
+
+      <!-- 그림자 & 네온 효과 컨트롤 -->
+      <div class="section-subtitle">텍스트 그림자 / 네온 이펙트 조절</div>
+      
+      <div class="grid-2">
+        <div class="control-group">
+          <label>그림자 색상</label>
+          <input type="color" id="shadowColor" value="#00f3ff">
+        </div>
+        <div class="control-group">
+          <label>발광/번짐(Blur) <span id="shadowBlurLabel">15</span></label>
+          <input type="range" id="shadowBlur" min="0" max="50" value="15">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="control-group">
+          <label>X 위치(Offset) <span id="shadowOffsetXLabel">0</span></label>
+          <input type="range" id="shadowOffsetX" min="-30" max="30" value="0">
+        </div>
+        <div class="control-group">
+          <label>Y 위치(Offset) <span id="shadowOffsetYLabel">0</span></label>
+          <input type="range" id="shadowOffsetY" min="-30" max="30" value="0">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label>그림자 투명도 <span id="shadowOpacityLabel">100%</span></label>
+        <input type="range" id="shadowOpacity" min="0" max="100" value="100">
+      </div>
+
+      <!-- 비율 설정 -->
+      <div class="control-group">
+        <label>출력 규격 (화면비)</label>
+        <div class="ratio-btns">
+          <button class="btn-cyber" onclick="setRatio(1, 1)">1:1</button>
+          <button class="btn-cyber" onclick="setRatio(4, 5)">4:5</button>
+          <button class="btn-cyber" onclick="setRatio(9, 16)">9:16</button>
+        </div>
+      </div>
+
+      <button class="btn-cyber" onclick="downloadImage()" style="padding: 10px; margin-top: 10px;">💾 완성 이미지 다운로드</button>
+    </section>
+
+    <!-- 오른쪽: 실시간 Canvas 미리보기 -->
+    <section class="panel">
+      <div class="panel-title">2. 실시간 홀로그램 미리보기 (글씨 드래그 가능)</div>
+      <div class="preview-container">
+        <canvas id="mainCanvas"></canvas>
+      </div>
+      <!-- 터미널 알림 로그 -->
+      <div class="terminal-log" id="terminalLog">
+        [SYSTEM] 터미널 초기화 완료.<br>
+      </div>
+    </section>
+
+    <!-- 하단: 템플릿 관리 & JSON 내보내기 -->
+    <section class="panel full-width grid-2">
+      <div>
+        <div class="panel-title">3. 템플릿 데이터베이스 (CRUD)</div>
+        <div style="display: flex; gap: 5px; margin: 10px 0;">
+          <input type="text" id="tplName" placeholder="템플릿 이름 입력" style="flex:1;">
+          <button class="btn-cyber" onclick="saveTemplate()">저장</button>
+        </div>
+        <div class="template-list" id="templateList"></div>
+      </div>
+
+      <div>
+        <div class="panel-title">4. JSON 이식 & 복원</div>
+        <div class="control-group" style="margin-top: 10px;">
+          <textarea id="jsonArea" rows="3" placeholder="JSON 데이터를 붙여넣거나 내보내세요."></textarea>
+          <div style="display: flex; gap: 5px; margin-top: 5px;">
+            <button class="btn-cyber" style="flex:1;" onclick="exportJSON()">JSON 내보내기</button>
+            <button class="btn-cyber" style="flex:1;" onclick="importJSON()">JSON 불러오기</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // --- Global State ---
+    const canvas = document.getElementById('mainCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    let currentImage = null;
+    let currentImageDataUrl = null;
+    let aspectRatio = { w: 1, h: 1 };
+    const baseWidth = 1080;
+
+    // UI Elements
+    const imageInput = document.getElementById('imageInput');
+    const textInput = document.getElementById('textInput');
+    const posXInput = document.getElementById('posX');
+    const posYInput = document.getElementById('posY');
+    const fontSizeInput = document.getElementById('fontSize');
+    const textColorInput = document.getElementById('textColor');
+    
+    // Shadow UI Elements
+    const shadowColorInput = document.getElementById('shadowColor');
+    const shadowBlurInput = document.getElementById('shadowBlur');
+    const shadowOffsetXInput = document.getElementById('shadowOffsetX');
+    const shadowOffsetYInput = document.getElementById('shadowOffsetY');
+    const shadowOpacityInput = document.getElementById('shadowOpacity');
+
+    // Labels
+    const posXLabel = document.getElementById('posXLabel');
+    const posYLabel = document.getElementById('posYLabel');
+    const fontSizeLabel = document.getElementById('fontSizeLabel');
+    const shadowBlurLabel = document.getElementById('shadowBlurLabel');
+    const shadowOffsetXLabel = document.getElementById('shadowOffsetXLabel');
+    const shadowOffsetYLabel = document.getElementById('shadowOffsetYLabel');
+    const shadowOpacityLabel = document.getElementById('shadowOpacityLabel');
+    const terminalLog = document.getElementById('terminalLog');
+
+    // Drag State
+    let isDragging = false;
+    let textMetrics = { x: 0, y: 0, width: 0, height: 0 };
+
+    // --- Logging System ---
+    function log(msg, isError = false) {
+      const time = new Date().toLocaleTimeString();
+      const errClass = isError ? 'class="log-err"' : '';
+      terminalLog.innerHTML += `<div ${errClass}>[${time}] ${msg}</div>`;
+      terminalLog.scrollTop = terminalLog.scrollHeight;
+    }
+
+    // HEX to RGBA Converter
+    function hexToRgba(hex, opacityPercent) {
+      let c = hex.replace('#', '');
+      if (c.length === 3) c = c.split('').map(x => x + x).join('');
+      const num = parseInt(c, 16);
+      const r = (num >> 16) & 255;
+      const g = (num >> 8) & 255;
+      const b = num & 255;
+      const a = opacityPercent / 100;
+      return `rgba(${r}, ${g}, ${b}, ${a})`;
+    }
+
+    // --- Auto Line Wrap Helper ---
+    function getWrappedLines(context, text, maxWidth) {
+      const words = text.split(' ');
+      let lines = [];
+      let currentLine = '';
+
+      for (let i = 0; i < words.length; i++) {
+        let word = words[i];
+        let testLine = currentLine ? currentLine + ' ' + word : word;
+        let metrics = context.measureText(testLine);
+
+        if (metrics.width > maxWidth && currentLine !== '') {
+          lines.push(currentLine);
+          currentLine = word;
+        } else {
+          if (context.measureText(word).width > maxWidth) {
+            if (currentLine) {
+              lines.push(currentLine);
+              currentLine = '';
+            }
+            let chars = word.split('');
+            let subLine = '';
+            for (let j = 0; j < chars.length; j++) {
+              let testCharLine = subLine + chars[j];
+              if (context.measureText(testCharLine).width > maxWidth && subLine !== '') {
+                lines.push(subLine);
+                subLine = chars[j];
+              } else {
+                subLine = testCharLine;
+              }
+            }
+            currentLine = subLine;
+          } else {
+            currentLine = testLine;
+          }
+        }
+      }
+      if (currentLine) {
+        lines.push(currentLine);
+      }
+      return lines;
+    }
+
+    // --- Event Listeners ---
+    imageInput.addEventListener('change', handleImageUpload);
+    
+    let previousTextLength = textInput.value.length;
+
+    textInput.addEventListener('input', () => {
+      const currentLength = textInput.value.length;
+      if (currentLength > previousTextLength) {
+        log(`TEXT_BUFFER: 문자를 추가했습니다.`);
+      }
+      previousTextLength = currentLength;
+      render();
+    });
+
+    textInput.addEventListener('compositionupdate', (e) => {
+      if (e.data) {
+        const currentLength = textInput.value.length;
+        if (currentLength >= previousTextLength) {
+          log(`TEXT_BUFFER: 문자를 추가했습니다.`);
+          previousTextLength = currentLength;
+        }
+      }
+    });
+
+    // Inputs rendering
+    [posXInput, posYInput, fontSizeInput, textColorInput, 
+     shadowColorInput, shadowBlurInput, shadowOffsetXInput, 
+     shadowOffsetYInput, shadowOpacityInput].forEach(el => {
+      el.addEventListener('input', () => {
+        updateLabels();
+        render();
+      });
+    });
+
+    // Mouse Drag Event Listeners
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseup', handleMouseUp);
+    canvas.addEventListener('mouseleave', handleMouseUp);
+
+    function updateLabels() {
+      posXLabel.innerText = posXInput.value + '%';
+      posYLabel.innerText = posYInput.value + '%';
+      fontSizeLabel.innerText = fontSizeInput.value;
+      shadowBlurLabel.innerText = shadowBlurInput.value;
+      shadowOffsetXLabel.innerText = shadowOffsetXInput.value;
+      shadowOffsetYLabel.innerText = shadowOffsetYInput.value;
+      shadowOpacityLabel.innerText = shadowOpacityInput.value + '%';
+    }
+
+    // --- Image Handling ---
+    function handleImageUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const validTypes = ['image/png', 'image/jpeg'];
+      if (!validTypes.includes(file.type)) {
+        log(`ERR_INVALID_FILE: '${file.name}'은(는) 지원되지 않는 형식을 포함합니다. (PNG/JPEG만 허용)`, true);
+        imageInput.value = "";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        currentImageDataUrl = event.target.result;
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = function() {
+          currentImage = img;
+          log(`SUCCESS: 이미지 '${file.name}' 로드 성공 (${img.width}x${img.height})`);
+          render();
+        };
+        img.src = currentImageDataUrl;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // --- Aspect Ratio Controller ---
+    function setRatio(w, h) {
+      aspectRatio = { w, h };
+      log(`GRID_CHANGED: 비율이 ${w}:${h}(으)로 변경되었습니다.`);
+      render();
+    }
+
+    // --- Main Rendering Engine ---
+    function render() {
+      canvas.width = baseWidth;
+      canvas.height = baseWidth * (aspectRatio.h / aspectRatio.w);
+
+      // Background Clear
+      ctx.fillStyle = "#08090c";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw Image
+      if (currentImage) {
+        const imgAspect = currentImage.width / currentImage.height;
+        const canvasAspect = canvas.width / canvas.height;
+        let drawW, drawH, drawX, drawY;
+
+        if (imgAspect > canvasAspect) {
+          drawH = canvas.height;
+          drawW = canvas.height * imgAspect;
+          drawX = (canvas.width - drawW) / 2;
+          drawY = 0;
+        } else {
+          drawW = canvas.width;
+          drawH = canvas.width / imgAspect;
+          drawX = 0;
+          drawY = (canvas.height - drawH) / 2;
+        }
+        ctx.drawImage(currentImage, drawX, drawY, drawW, drawH);
+      } else {
+        ctx.strokeStyle = "#1e2638";
+        ctx.lineWidth = 4;
+        ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+      }
+
+      // Draw Text with Auto Wrap & Shadow
+      const text = textInput.value;
+      if (text) {
+        const pX = (posXInput.value / 100) * canvas.width;
+        const pY = (posYInput.value / 100) * canvas.height;
+        const size = parseInt(fontSizeInput.value) * (canvas.width / 500);
+        const lineHeight = size * 1.3;
+        const maxTextWidth = canvas.width * 0.9;
+
+        ctx.font = `bold ${size}px 'Courier New', sans-serif`;
+        ctx.fillStyle = textColorInput.value;
+        ctx.textAlign = "center";
+        
+        // Shadow / Glow Config
+        const scaleFactor = canvas.width / 500;
+        ctx.shadowColor = hexToRgba(shadowColorInput.value, shadowOpacityInput.value);
+        ctx.shadowBlur = parseFloat(shadowBlurInput.value) * scaleFactor;
+        ctx.shadowOffsetX = parseFloat(shadowOffsetXInput.value) * scaleFactor;
+        ctx.shadowOffsetY = parseFloat(shadowOffsetYInput.value) * scaleFactor;
+        
+        // 줄바꿈 계산
+        const lines = getWrappedLines(ctx, text, maxTextWidth);
+        const totalHeight = lines.length * lineHeight;
+        const startY = pY - (totalHeight / 2) + (size / 2);
+
+        let maxLineWidth = 0;
+        lines.forEach((line, index) => {
+          const currentY = startY + (index * lineHeight);
+          ctx.fillText(line, pX, currentY);
+
+          const lineWidth = ctx.measureText(line).width;
+          if (lineWidth > maxLineWidth) {
+            maxLineWidth = lineWidth;
+          }
+        });
+
+        // Reset Shadow for Other System Renderings
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+
+        // Bounding Box for Drag Hit Test
+        textMetrics = {
+          x: pX - maxLineWidth / 2,
+          y: startY - size,
+          width: maxLineWidth,
+          height: totalHeight
+        };
+      }
+    }
+
+    // --- Drag Interaction Handlers ---
+    function getCanvasCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+
+      const pxX = (e.clientX - rect.left) * scaleX;
+      const pxY = (e.clientY - rect.top) * scaleY;
+
+      const percentX = Math.min(Math.max((pxX / canvas.width) * 100, 0), 100);
+      const percentY = Math.min(Math.max((pxY / canvas.height) * 100, 0), 100);
+
+      return { x: percentX, y: percentY, pxX, pxY };
+    }
+
+    function handleMouseDown(e) {
+      const { pxX, pxY } = getCanvasCoords(e);
+      const { x, y, width, height } = textMetrics;
+
+      if (pxX >= x && pxX <= x + width && pxY >= y && pxY <= y + height) {
+        isDragging = true;
+      }
+    }
+
+    function handleMouseMove(e) {
+      const { x, y, pxX, pxY } = getCanvasCoords(e);
+      const { x: tX, y: tY, width, height } = textMetrics;
+
+      if (pxX >= tX && pxX <= tX + width && pxY >= tY && pxY <= tY + height) {
+        canvas.style.cursor = 'move';
+      } else if (!isDragging) {
+        canvas.style.cursor = 'default';
+      }
+
+      if (isDragging) {
+        posXInput.value = Math.round(x);
+        posYInput.value = Math.round(y);
+        updateLabels();
+        render();
+      }
+    }
+
+    function handleMouseUp() {
+      if (isDragging) {
+        isDragging = false;
+        canvas.style.cursor = 'default';
+      }
+    }
+
+    // --- Download Engine (CORS / Local File 안전 처리) ---
+    function downloadImage() {
+      try {
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            log(`ERR_CORS: 로컬 파일(file://) 환경 보안 문제로 내보내기가 거부되었습니다. Live Server 환경에서 실행해주세요.`, true);
+            return;
+          }
+          const link = document.createElement('a');
+          link.download = `cyber_poster_${Date.now()}.png`;
+          link.href = URL.createObjectURL(blob);
+          link.click();
+          setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+          log(`EXPORT_COMPLETE: 파일이 성공적으로 내려받아졌습니다.`);
+        }, 'image/png');
+      } catch (err) {
+        log(`ERR_SECURITY: 브라우저 파일 보안 정책으로 인해 다운로드가 차단되었습니다. 로컬 서버(VS Code Live Server 등)를 이용해주세요.`, true);
+      }
+    }
+
+    // --- Template CRUD ---
+    function getStorage() {
+      return JSON.parse(localStorage.getItem('cyber_templates') || '[]');
+    }
+
+    function saveTemplate() {
+      const nameInput = document.getElementById('tplName');
+      const name = nameInput.value.trim();
+      if (!name) return log(`ERR_CRUD: 템플릿 이름을 입력하십시오.`, true);
+
+      const templates = getStorage();
+      const newTpl = {
+        id: 'TPL_' + Date.now(),
+        name: name,
+        text: textInput.value,
+        posX: posXInput.value,
+        posY: posYInput.value,
+        fontSize: fontSizeInput.value,
+        textColor: textColorInput.value,
+        shadowColor: shadowColorInput.value,
+        shadowBlur: shadowBlurInput.value,
+        shadowOffsetX: shadowOffsetXInput.value,
+        shadowOffsetY: shadowOffsetYInput.value,
+        shadowOpacity: shadowOpacityInput.value,
+        ratio: aspectRatio,
+        imageDataUrl: currentImageDataUrl
+      };
+
+      try {
+        templates.push(newTpl);
+        localStorage.setItem('cyber_templates', JSON.stringify(templates));
+        nameInput.value = '';
+        log(`DB_SAVE: 템플릿 '${name}' 저장 완료`);
+        renderTemplateList();
+      } catch (e) {
+        log(`ERR_STORAGE_FULL: 저장 용량이 초과되었습니다. 고용량 이미지가 포함되어 있을 수 있습니다.`, true);
+      }
+    }
+
+    function loadTemplate(id) {
+      const templates = getStorage();
+      const target = templates.find(t => t.id === id);
+      if (!target) return;
+
+      textInput.value = target.text;
+      posXInput.value = target.posX;
+      posYInput.value = target.posY;
+      fontSizeInput.value = target.fontSize;
+      textColorInput.value = target.textColor;
+      shadowColorInput.value = target.shadowColor || '#00f3ff';
+      shadowBlurInput.value = target.shadowBlur || '15';
+      shadowOffsetXInput.value = target.shadowOffsetX || '0';
+      shadowOffsetYInput.value = target.shadowOffsetY || '0';
+      shadowOpacityInput.value = target.shadowOpacity || '100';
+      aspectRatio = target.ratio;
+      
+      updateLabels();
+
+      if (target.imageDataUrl) {
+        currentImageDataUrl = target.imageDataUrl;
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = function() {
+          currentImage = img;
+          log(`DB_LOAD: 템플릿 '${target.name}' 및 이미지 불러오기 완료`);
+          render();
+        };
+        img.src = target.imageDataUrl;
+      } else {
+        currentImage = null;
+        currentImageDataUrl = null;
+        log(`DB_LOAD: 템플릿 '${target.name}' 불러오기 완료 (저장된 이미지 없음)`);
+        render();
+      }
+    }
+
+    function deleteTemplate(id) {
+      let templates = getStorage();
+      templates = templates.filter(t => t.id !== id);
+      localStorage.setItem('cyber_templates', JSON.stringify(templates));
+      log(`DB_DELETE: 템플릿 삭제 완료`);
+      renderTemplateList();
+    }
+
+    function renderTemplateList() {
+      const listContainer = document.getElementById('templateList');
+      const templates = getStorage();
+      listContainer.innerHTML = '';
+
+      templates.forEach(t => {
+        const item = document.createElement('div');
+        item.className = 'template-item';
+        item.innerHTML = `
+          <span>${t.name} (${t.ratio.w}:${t.ratio.h})</span>
+          <div>
+            <button class="btn-cyber" onclick="loadTemplate('${t.id}')">로드</button>
+            <button class="btn-cyber btn-danger" onclick="deleteTemplate('${t.id}')">삭제</button>
+          </div>
+        `;
+        listContainer.appendChild(item);
+      });
+    }
+
+    // --- JSON Portability ---
+    function exportJSON() {
+      const data = {
+        text: textInput.value,
+        posX: posXInput.value,
+        posY: posYInput.value,
+        fontSize: fontSizeInput.value,
+        textColor: textColorInput.value,
+        shadowColor: shadowColorInput.value,
+        shadowBlur: shadowBlurInput.value,
+        shadowOffsetX: shadowOffsetXInput.value,
+        shadowOffsetY: shadowOffsetYInput.value,
+        shadowOpacity: shadowOpacityInput.value,
+        ratio: aspectRatio,
+        imageDataUrl: currentImageDataUrl
+      };
+      document.getElementById('jsonArea').value = JSON.stringify(data, null, 2);
+      log(`JSON_EXPORT: 현재 설정 및 이미지 백업 스트링 생성 완료`);
+    }
+
+    function importJSON() {
+      const jsonStr = document.getElementById('jsonArea').value;
+      try {
+        const parsed = JSON.parse(jsonStr);
+        
+        if (!parsed.text || !parsed.posX || !parsed.ratio) {
+          throw new Error("MISSING_REQUIRED_KEYS");
+        }
+
+        textInput.value = parsed.text;
+        posXInput.value = parsed.posX;
+        posYInput.value = parsed.posY;
+        fontSizeInput.value = parsed.fontSize;
+        textColorInput.value = parsed.textColor;
+        shadowColorInput.value = parsed.shadowColor || '#00f3ff';
+        shadowBlurInput.value = parsed.shadowBlur || '15';
+        shadowOffsetXInput.value = parsed.shadowOffsetX || '0';
+        shadowOffsetYInput.value = parsed.shadowOffsetY || '0';
+        shadowOpacityInput.value = parsed.shadowOpacity || '100';
+        aspectRatio = parsed.ratio;
+
+        updateLabels();
+
+        if (parsed.imageDataUrl) {
+          currentImageDataUrl = parsed.imageDataUrl;
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.onload = function() {
+            currentImage = img;
+            log(`JSON_IMPORT: 성공적으로 템플릿과 이미지를 복원하였습니다.`);
+            render();
+          };
+          img.src = parsed.imageDataUrl;
+        } else {
+          currentImage = null;
+          currentImageDataUrl = null;
+          log(`JSON_IMPORT: 성공적으로 템플릿을 복원하였습니다 (이미지 없음).`);
+          render();
+        }
+      } catch (err) {
+        log(`ERR_JSON_RESTORE: 파싱 불가능한 JSON 구조입니다. 기존 상태를 유지합니다.`, true);
+      }
+    }
+
+    // Init Execution
+    renderTemplateList();
+    updateLabels();
+    render();
+  </script>
+</body>
+</html>
